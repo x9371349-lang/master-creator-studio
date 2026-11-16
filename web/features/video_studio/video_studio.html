@@ -1,0 +1,161 @@
+<div class="vs-container">
+  <!-- Left Project Shelf -->
+  <aside class="vs-shelf">
+    <div class="vs-shelf-header">
+      <div class="vs-shelf-title">
+        <h3><span>🎬 视频剧集库</span></h3>
+        <span id="vsProjectCount" class="vs-badge-count">0 篇</span>
+      </div>
+      <div class="vs-search-box">
+        <input type="search" id="vsSearchInput" placeholder="搜索剧集（如：皮定均、严世蕃、突围）..." />
+      </div>
+    </div>
+    <div id="vsProjectList" class="vs-shelf-list">
+      <div style="padding:20px;text-align:center;color:#64748b;font-size:12px">正在扫描本地视频工程…</div>
+    </div>
+  </aside>
+
+  <!-- Right Main Studio -->
+  <main class="vs-main">
+    <!-- Header with Engine Status -->
+    <header class="vs-header">
+      <div class="vs-engine-bar" id="vsEngineBar">
+        <div class="vs-engine-badge"><span class="vs-dot"></span><span>ChatCut Desktop MCP</span></div>
+        <div class="vs-engine-badge"><span class="vs-dot"></span><span>生图账号池 20/20</span></div>
+        <div class="vs-engine-badge"><span class="vs-dot"></span><span>Lemo-Opuscar 99风格</span></div>
+        <div class="vs-engine-badge"><span class="vs-dot"></span><span>GIF工厂片头/签名</span></div>
+        <div class="vs-engine-badge"><span class="vs-dot"></span><span>剪映专业版草稿</span></div>
+        <div class="vs-engine-badge"><span class="vs-dot"></span><span>视频号草稿通道</span></div>
+      </div>
+      <div class="vs-header-actions">
+        <button type="button" class="vs-btn vs-btn-outline" id="vsOpenChatCutBtn">🎛️ ChatCut</button>
+        <button type="button" class="vs-btn vs-btn-outline" id="vsOpenJianYingBtn">✂️ 剪映专业版</button>
+        <button type="button" class="vs-btn vs-btn-primary" id="vsRefreshBtn">🔄 刷新状态</button>
+      </div>
+    </header>
+
+    <!-- Sub Tabs Navigation -->
+    <nav class="vs-subtabs">
+      <button type="button" class="vs-subtab-btn active" data-vstab="player">🎞️ 成片预览与交付</button>
+      <button type="button" class="vs-subtab-btn" data-vstab="titles">🎬 电影片头字卡 (50款)</button>
+      <button type="button" class="vs-subtab-btn" data-vstab="lemo">⚙️ 代码电影与沙盘 (99款)</button>
+      <button type="button" class="vs-subtab-btn" data-vstab="script">📝 剧本与高光字幕</button>
+      <button type="button" class="vs-subtab-btn" data-vstab="voice">🎙️ 配音与人声净化</button>
+    </nav>
+
+    <!-- Sub Tabs Content -->
+    <div class="vs-content">
+      <!-- Tab 1: Video Player & Inspector -->
+      <section id="vsTabPlayer" class="vs-tab-panel">
+        <div class="vs-player-section">
+          <!-- Big Video Box -->
+          <div class="vs-video-box">
+            <video id="vsVideoPlayer" controls preload="metadata" poster="">
+              <source id="vsVideoSource" src="" type="video/mp4">
+              您的浏览器不支持 HTML5 视频播放
+            </video>
+          </div>
+
+          <!-- Inspector & Action Panel -->
+          <div class="vs-inspector">
+            <div class="vs-inspector-title" id="vsInspectTitle">选择剧集查看</div>
+            
+            <div class="vs-meta-row">
+              <span class="vs-meta-label">剧集编号</span>
+              <span class="vs-meta-val" id="vsMetaEp">-</span>
+            </div>
+            <div class="vs-meta-row">
+              <span class="vs-meta-label">成片体积</span>
+              <span class="vs-meta-val" id="vsMetaSize">-</span>
+            </div>
+            <div class="vs-meta-row">
+              <span class="vs-meta-label">生成时间</span>
+              <span class="vs-meta-val" id="vsMetaTime">-</span>
+            </div>
+            <div class="vs-meta-row">
+              <span class="vs-meta-label">分镜剧照</span>
+              <span class="vs-meta-val" id="vsMetaShots">0 张</span>
+            </div>
+            <div class="vs-meta-row">
+              <span class="vs-meta-label">剪映草稿</span>
+              <span class="vs-meta-val" id="vsMetaDraft">就绪</span>
+            </div>
+
+            <div class="vs-inspector-actions">
+              <button type="button" class="vs-btn vs-btn-primary" id="vsPushChannelsBtn" style="background:#059669">
+                <span>🚀 保存至视频号草稿箱</span>
+              </button>
+              <button type="button" class="vs-btn vs-btn-outline" id="vsLaunchJianYingProjectBtn">
+                <span>✂️ 在剪映专业版中打开</span>
+              </button>
+              <button type="button" class="vs-btn vs-btn-outline" id="vsRevealFinderBtn">
+                <span>📁 在访达 (Finder) 中显示</span>
+              </button>
+            </div>
+            
+            <div id="vsActionFeedback" style="font-size:12px;color:#38bdf8;margin-top:4px;min-height:16px;text-align:center"></div>
+          </div>
+        </div>
+
+        <!-- Shots Strip -->
+        <div style="margin-top:20px">
+          <h4 style="margin:0 0 10px 0;font-size:13px;color:#94a3b8">🖼️ 本集关键帧剧照资产</h4>
+          <div id="vsShotsStrip" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:10px"></div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Title Lettering (gif-factory) -->
+      <section id="vsTabTitles" class="vs-tab-panel" hidden>
+        <div style="margin-bottom:14px">
+          <h3 style="margin:0 0 6px 0;font-size:15px;color:#f8fafc">🎬 电影级书法与艺术字片头库 (gif-factory)</h3>
+          <p style="margin:0;font-size:12px;color:#94a3b8">前 3 秒视觉爆点钩子。涵盖 50 种中文书法字形与 50 种英文排版，支持生成水墨飞溅、鎏金浮雕等开场字卡。</p>
+        </div>
+        <div class="vs-grid" id="vsTitlesGrid"></div>
+      </section>
+
+      <!-- Tab 3: Lemo-Opuscar Code Cinema -->
+      <section id="vsTabLemo" class="vs-tab-panel" hidden>
+        <div style="margin-bottom:14px">
+          <h3 style="margin:0 0 6px 0;font-size:15px;color:#f8fafc">⚙️ Lemo-Opuscar 99 种纯代码影片与战术沙盘</h3>
+          <p style="margin:0;font-size:12px;color:#94a3b8">100% 本地 WebGL/Canvas 代码渲染，0 算力 0 额度消耗。适用于大兵团作战推演、卫星俯瞰、水彩史诗与立体拆解。</p>
+        </div>
+        <div class="vs-grid" id="vsLemoGrid"></div>
+      </section>
+
+      <!-- Tab 4: Script & Subtitles -->
+      <section id="vsTabScript" class="vs-tab-panel" hidden>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <h4 style="margin:0 0 8px 0;font-size:13px;color:#94a3b8">📄 分镜脚本文本 (Script)</h4>
+            <div class="vs-text-preview" id="vsScriptPreview">暂无脚本数据</div>
+          </div>
+          <div>
+            <h4 style="margin:0 0 8px 0;font-size:13px;color:#94a3b8">📝 黄色双校验字幕文件 (SRT)</h4>
+            <div class="vs-text-preview" id="vsSrtPreview">暂无字幕数据</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 5: Voice & Clean -->
+      <section id="vsTabVoice" class="vs-tab-panel" hidden>
+        <div style="background:#131d31;padding:20px;border-radius:12px;border:1px solid #1e293b;max-width:700px">
+          <h4 style="margin:0 0 12px 0;font-size:14px;color:#f8fafc">🎙️ 语音引擎与声场配置</h4>
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0f172a;border-radius:8px">
+              <span>当前默认音色</span>
+              <strong style="color:#38bdf8">微软云健 (zh-CN-YunjianNeural) · 沉浸式历史评书</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0f172a;border-radius:8px">
+              <span>ChatCut 人声隔离 (Voice Isolation)</span>
+              <span style="color:#10b981;font-weight:600">已就绪 (原生降噪去杂音)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0f172a;border-radius:8px">
+              <span>字幕格式</span>
+              <span style="color:#e2e8f0">毫秒级时间戳 · 剪映高光黄字自适应</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {createImportBridge} from '../web/features/workbench/workspace-imports.js';
+const data={drafts:[{id:'old',text:'未保存编辑'}],references:[],sessions:[{id:'s',referenceIds:[]}],ui:{activeSessionId:'s'}};
+const item={id:'inbox1',ref:{id:'ref1',text:'来源'},draft:{id:'doc1',text:'原稿'}};
+let saved=false,ack=0,dirty=0,fail=true;
+const api=async(path)=>{if(path.endsWith('/imports'))return{items:[item]};assert.ok(saved,'ack must happen after save');ack++;return{ok:true};};
+const bridge=createImportBridge({api,getData:()=>data,changed:()=>dirty++,flush:async()=>{if(fail)throw Error('offline');saved=true;},render(){},showToast(){}});
+await assert.rejects(bridge.pull(),/offline/);
+assert.equal(ack,0);assert.equal(data.drafts.find(x=>x.id==='old').text,'未保存编辑');
+fail=false;await bridge.pull();
+assert.equal(data.references.length,1);assert.equal(data.drafts.length,2);assert.equal(dirty,1);assert.equal(ack,1);
+await Promise.all([bridge.pull(),bridge.pull()]);assert.equal(ack,2,'concurrent polling shares one request');
+console.log('Import inbox dedupe, save-before-ack and unsaved edit preservation passed');

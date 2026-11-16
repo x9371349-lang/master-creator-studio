@@ -1,0 +1,57 @@
+/* Google Labs Stitch / Taste-Design Standard: Studio Tokens */
+:root {
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-ReadMode: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --primary-color: #0f172a;
+  --primary-light: #f1f5f9;
+  --accent-ai: #0284c7;
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --radius-lg: 14px;
+  --radius-md: 9px;
+  --shadow-float: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --line-soft: #e2e8f0;
+  --action-ink: #0f172a;
+  --on-primary: #ffffff;
+  --ai-light: #f0f9ff;
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Segoe UI", sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
+  --accent: var(--primary-color);
+  --line: var(--line-soft);
+}
+.employee-app { color:var(--text-main);background:var(--bg-canvas);font-family:var(--font-ui); }
+.employee-app[data-stage="workbench"] { overflow:hidden; }
+.employee-app button,.employee-app input,.employee-app textarea,.employee-app select { border-radius:var(--radius-md); }
+.employee-app :is(button,input,textarea,select):focus-visible,.employee-app .file-button:focus-within { outline:2px solid var(--accent-ai);outline-offset:3px; }
+.employee-app .primary { background:var(--primary-color);border-color:var(--primary-color);color:var(--on-primary); }
+.employee-app .primary:hover:not(:disabled) { background:#E58068;border-color:#E58068; }
+.employee-app .shell-dialog,.employee-app .vc-dialog { background:var(--bg-surface);border:0;border-radius:var(--radius-lg);color:var(--text-main);box-shadow:0 24px 80px rgba(44,42,41,.18); }
+.employee-app dialog::backdrop { background:rgba(44,42,41,.32);backdrop-filter:blur(4px); }
+.employee-app .subtle { color:var(--text-secondary); }
+.employee-app #toast { background:var(--text-main);border-radius:var(--radius-md);box-shadow:var(--shadow-float); }
+.employee-app #toast.error { background:#A3422C; }
+.employee-app .onboarding { background:var(--bg-canvas); }
+.employee-app .onboarding-card { border:0;border-radius:var(--radius-lg);box-shadow:var(--shadow-float); }
+.employee-app .onboarding-brand { color:var(--text-main); }
+.employee-app .onboarding-brand svg,.employee-app .text-button,.employee-app .login-success { color:var(--action-ink); }
+.employee-app .welcome-heading h1 { font-family:var(--font-heading); }
+.employee-app .welcome-heading p,.employee-app .flow-status,.employee-app .machine-section .contact { color:var(--text-secondary); }
+.employee-app .setup-steps [aria-current="step"],.employee-app .setup-steps .complete { color:var(--action-ink); }
+.employee-app .setup-steps [aria-current="step"]>span { background:var(--primary-color);border-color:var(--primary-color); }
+.employee-app .setup-steps .complete>span { background:var(--primary-light);border-color:#EFC8BC; }
+.employee-app .onboarding-card :is(input,textarea),.employee-app .service-options .service-option { border-color:var(--line-soft); }
+.employee-app .onboarding-card .primary { background:var(--primary-color);border-color:var(--primary-color); }
+.employee-app .onboarding-card .primary:hover:not(:disabled) { background:#E58068;border-color:#E58068; }
+.employee-app .service-option input { accent-color:var(--primary-color); }
+.employee-app .service-option:has(input:checked) { background:var(--primary-light);border-color:var(--primary-color);color:var(--action-ink); }
+.employee-app .service-option:focus-within { outline-color:var(--accent-ai); }
+.employee-app .machine-section #machineCode { background:var(--bg-ReadMode);color:var(--text-secondary); }
+.employee-app .flow-status.is-error { color:#A3422C; }
+.studio-release-version { color:var(--accent-ai);font-variant-numeric:tabular-nums; }
+.studio-release-dialog h3 { font-family:var(--font-heading);font-size:22px;font-weight:600; }
+.studio-release-dialog li { margin:10px 0;color:var(--text-secondary); }
+@media(prefers-reduced-motion:reduce) { .employee-app *, .employee-app *::before,.employee-app *::after { animation:none!important;transition:none!important;scroll-behavior:auto!important; } }
+

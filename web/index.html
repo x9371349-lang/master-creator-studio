@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>创作者统合工作台 · Master Creator Studio</title>
+  <link rel="stylesheet" href="/web/shell.css?v=20261115-taste-v2">
+  <link rel="stylesheet" href="/web/studio-tokens.css?v=20261115-taste-v2">
+  <link rel="stylesheet" href="/web/studio-shell.css?v=20261115-taste-v2">
+  <link rel="stylesheet" href="/web/features/video_studio/video_studio.css?v=20261115-taste-v2">
+</head>
+<body>
+<aside id="studioSidebar" class="studio-sidebar" hidden>
+  <button class="studio-brand" type="button" data-tab="home"><span class="studio-mark">✦</span><span><strong>创作者工作台</strong><small>MASTER CREATOR STUDIO</small></span></button>
+  <button id="studioNew" class="studio-new" type="button">＋ <span>开始创作</span></button>
+  <nav class="studio-navigation" aria-label="主导航">
+    <button class="studio-tab" data-tab="home"><span aria-hidden="true">▦</span><span>工作总览</span></button>
+    <button class="studio-tab" data-tab="radar"><span aria-hidden="true">◉</span><span>灵感雷达</span></button>
+    <button class="studio-tab" data-tab="library"><span aria-hidden="true">▤</span><span>素材与稿件</span></button>
+    <button class="studio-tab" data-tab="topics"><span aria-hidden="true">◇</span><span>选题计划</span></button>
+    <button class="studio-tab" data-tab="workbench"><span aria-hidden="true">✎</span><span>创作工坊</span></button>
+    <button class="studio-tab" data-tab="video_studio"><span aria-hidden="true">🎬</span><span>视频生成平台</span></button>
+    <button class="studio-tab" data-tab="delivery"><span aria-hidden="true">↗</span><span>成品与发布</span></button>
+    <button class="studio-tab" data-tab="insights"><span aria-hidden="true">▥</span><span>数据复盘</span></button>
+    <small class="studio-nav-label">连接工作区</small>
+    <button class="studio-tab" data-tab="wanfeng"><span aria-hidden="true">❧</span><span>晚风拾响</span></button>
+    <button class="studio-tab" data-tab="creatorhub"><span aria-hidden="true">◎</span><span>采集与矩阵</span></button>
+    <button class="studio-tab" data-tab="image_workbench"><span aria-hidden="true">🎨</span><span>生图工坊</span></button>
+  </nav>
+  <div class="studio-nav-footer">
+    <button id="skillsCatalogBtn" title="选择创作者技能">✧ <span>创作者技能</span></button>
+    <button id="settingsButton" disabled>⚙ <span>模型设置</span></button>
+    <button id="licenseButton">⌘ <span>授权信息</span></button>
+    <small>内容保存在本机 · 自动保存</small>
+  </div>
+</aside>
+<header class="app-header" hidden>
+  <div class="studio-location"><button id="studioNavToggle" type="button" aria-label="收起导航" aria-expanded="true">☰</button><span>工作空间</span><span aria-hidden="true">/</span><strong id="studioPageTitle">工作总览</strong></div>
+  <label class="studio-search"><span aria-hidden="true">⌕</span><input id="studioSearch" type="search" placeholder="查找稿件、素材、选题" aria-label="查找稿件、素材、选题"><kbd>⌘ K</kbd></label>
+  <span id="studioConnection" class="studio-local" role="status"><i></i><span id="studioSaveLabel">本机工作空间</span></span>
+</header>
+
+<main id="onboarding" class="onboarding">
+  <div class="onboarding-brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M8 4h11l6 6v18H8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M19 4v7h6M12 16h9M12 21h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>创作者统合工作台</span></div>
+  <ol class="setup-steps" aria-label="开始使用"><li data-step="login" aria-current="step"><span>1</span>登录</li><li data-step="setup"><span>2</span>配置密钥</li><li data-step="workbench"><span>3</span>开始创作</li></ol>
+  <section id="activation" class="onboarding-card"><header class="welcome-heading"><h1>登录创作者统合工作台</h1><p>输入授权码，开启你的创作空间。</p></header>
+  <form id="loginForm"><label for="activationCode">授权码</label><textarea id="activationCode" rows="3" placeholder="粘贴收到的完整授权码" spellcheck="false" autocomplete="off" required></textarea><div class="import-row"><label class="file-button">导入授权文件<input type="file" id="licenseFile" accept=".cwlicense,.txt" hidden></label></div><p id="licenseReason" class="flow-status" role="status">正在读取电脑标识…</p><button id="activateButton" class="primary flow-submit" type="submit">登录并继续</button></form>
+  <div class="machine-section"><div class="machine-heading"><label for="machineCode">本机机器码</label><button id="copyMachine" class="text-button">复制机器码</button></div><textarea id="machineCode" readonly rows="2" aria-label="机器码"></textarea><p class="contact">请添加微信：million_iiii 获取授权码</p></div><button id="backToWorkbench" class="text-button back-link" hidden>返回工作台</button></section>
+  <section id="setup" class="onboarding-card" hidden><header class="welcome-heading"><span class="login-success">✓ 已登录</span><h1>配置你的密钥</h1><p>只需完成这一步，即可开始创作。</p></header><div id="setupFormHost"></div><button id="setupLicense" class="text-button back-link">更新授权</button></section>
+  <p class="onboarding-footer">专注表达，让好内容自然发生。</p>
+</main>
+
+<!-- Master Studio Views -->
+<main id="studioFlowView" class="studio-view" hidden></main>
+<div id="workbenchView" class="studio-view" hidden></div>
+
+<div id="radarView" class="studio-view" hidden style="display:flex;flex-direction:column;background:#f8fafc;overflow:hidden">
+  <!-- Top Radar Sub-nav -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:#fff;border-bottom:1px solid #e2e8f0;flex:none">
+    <div style="display:flex;align-items:center;gap:14px">
+      <strong style="font-size:15px;color:#0f172a;display:flex;align-items:center;gap:6px">📡 全网素材雷达</strong>
+      <div style="display:flex;gap:4px;background:#f1f5f9;padding:3px;border-radius:8px">
+        <button type="button" class="radar-subtab active" data-radar-sub="hot" style="padding:5px 14px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#0f172a;box-shadow:0 1px 2px rgba(0,0,0,0.05)">🔥 7平台热搜榜</button>
+        <button type="button" class="radar-subtab" data-radar-sub="aihot" style="padding:5px 14px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#64748b">⚡️ AIHOT 热点与早报</button>
+        <button type="button" class="radar-subtab" data-radar-sub="wechat10w" style="padding:5px 14px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#64748b">📈 微信 10w+ 爆文池</button>
+        <button type="button" class="radar-subtab" data-radar-sub="wechat" style="padding:5px 14px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#64748b">🔍 微信文章搜索</button>
+        <button type="button" class="radar-subtab" data-radar-sub="creatorhub" style="padding:5px 14px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#64748b">🎯 CreatorHub 视频口播</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="search" id="radarMasterSearch" placeholder="搜索热榜/文章/视频..." style="width:240px;font-size:12px;padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;outline:none" />
+      <button type="button" id="radarRefreshBtn" style="padding:6px 12px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500">🔄 刷新</button>
+    </div>
+  </div>
+
+  <!-- Radar Sub-Views -->
+  <div id="radarSubHot" class="radar-subpanel" style="flex:1;overflow-y:auto;padding:18px 24px">
+    <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px" id="radarHotPills"></div>
+    <div id="radarHotCards" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px"></div>
+  </div>
+
+  <!-- AIHOT Subpanel -->
+  <div id="radarSubAihot" class="radar-subpanel" hidden style="flex:1;overflow-y:auto;padding:18px 24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;background:#fff;padding:12px 18px;border-radius:10px;border:1px solid #e2e8f0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-weight:600;color:#0f172a;font-size:14px">🔥 数字生命卡兹克 AIHOT 引擎</span>
+        <div style="display:flex;background:#f1f5f9;padding:3px;border-radius:6px" id="aihotModeSwitch">
+          <button type="button" class="aihot-mode-btn active" data-mode="hot" style="padding:4px 12px;border:none;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#0f172a">实时 Top 10 热点</button>
+          <button type="button" class="aihot-mode-btn" data-mode="daily" style="padding:4px 12px;border:none;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#64748b">每日早报精选</button>
+        </div>
+      </div>
+      <span style="font-size:12px;color:#64748b" id="aihotStatusTip">多信源大模型双重精选 · 自动聚类热点事件</span>
+    </div>
+    <div id="radarAihotCards" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));gap:14px"></div>
+  </div>
+
+  <!-- WeChat 10w+ Subpanel -->
+  <div id="radarSubWechat10w" class="radar-subpanel" hidden style="flex:1;overflow-y:auto;padding:18px 24px">
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:600;color:#0f172a;font-size:14px">📈 微信 10w+ 爆款选题池</span>
+          <span style="font-size:12px;color:#059669;background:#ecfdf5;padding:2px 8px;border-radius:12px;border:1px solid #a7f3d0">全网持续收录 1000+ 篇爆文</span>
+        </div>
+        <span style="font-size:12px;color:#64748b">拆解对标文章思路，一键引入工坊重构</span>
+      </div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px" id="radarWechat10wCategories"></div>
+    </div>
+    <div id="radarWechat10wCards" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));gap:14px"></div>
+  </div>
+
+  <div id="radarSubWechat" class="radar-subpanel" hidden style="flex:1;overflow-y:auto;padding:18px 24px">
+    <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
+      <input type="text" id="wechatSearchKeyword" placeholder="输入搜索词（如：养老、民间故事、退休、健康、人情世故）" style="max-width:380px;font-size:13px;padding:8px 14px;border:1px solid #cbd5e1;border-radius:8px;flex:1" value="晚风 养老 心态" />
+      <button type="button" id="wechatSearchBtn" style="padding:8px 18px;background:#059669;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">🔍 搜索微信文章</button>
+      <span style="font-size:12px;color:#64748b">搜索结果只是线索，获取完整原文后再进行二创。</span>
+    </div>
+    <div id="radarWechatCards" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+
+  <div id="radarSubCreatorHub" class="radar-subpanel" hidden style="flex:1;overflow-y:auto;padding:18px 24px">
+    <div id="radarCreatorHubCards" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:12px"></div>
+  </div>
+</div>
+
+<div id="wanfengView" class="studio-view" hidden style="background:#fff">
+  <iframe id="wanfengStudioIframe" src="http://127.0.0.1:8899/" style="width:100%;height:100%;border:none" title="晚风拾响深度长文工坊"></iframe>
+</div>
+
+<div id="creatorhubView" class="studio-view" hidden style="background:#fff;position:relative">
+  <div style="position:absolute;top:10px;right:20px;z-index:99;display:flex;gap:6px;opacity:0.85">
+    <button type="button" onclick="document.getElementById('creatorhubStudioIframe').src='http://127.0.0.1:8088/'" style="padding:4px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.1)">🔄 刷新工作区</button>
+    <a href="http://127.0.0.1:8088/" target="_blank" style="padding:4px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;color:#0f172a;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,0.1)">↗ 浏览器独立打开</a>
+  </div>
+  <iframe id="creatorhubStudioIframe" src="http://127.0.0.1:8088/" style="width:100%;height:100%;border:none" title="CreatorHub 全网爆款监控与矩阵"></iframe>
+</div>
+
+<div id="image_workbenchView" class="studio-view" hidden style="background:#fff;position:relative">
+  <div style="position:absolute;top:10px;right:20px;z-index:99;display:flex;gap:6px;opacity:0.85">
+    <button type="button" onclick="document.getElementById('imageWorkbenchStudioIframe').src='http://127.0.0.1:8092/'" style="padding:4px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.1)">🔄 刷新工坊</button>
+    <a href="http://127.0.0.1:8092/" target="_blank" style="padding:4px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;color:#0f172a;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,0.1)">↗ 浏览器独立打开</a>
+  </div>
+  <iframe id="imageWorkbenchStudioIframe" src="http://127.0.0.1:8092/" style="width:100%;height:100%;border:none" title="Bluxe手绘生图工坊"></iframe>
+</div>
+
+<div id="video_studioView" class="studio-view" hidden style="background:#090d16;height:100%"></div>
+
+<!-- Dialogs -->
+<dialog id="skillsCatalogDialog" class="vc-dialog wb-dialog" style="max-width:880px;width:95vw">
+  <div class="dialog-shell" style="max-height:85vh;display:flex;flex-direction:column;gap:12px">
+    <div class="wb-dialog-heading">
+      <h3 style="margin:0;display:flex;align-items:center;gap:8px">✦ 87+ 创作者 AI 技能库</h3>
+      <button type="button" data-close="skillsCatalogDialog" aria-label="关闭">×</button>
+    </div>
+    <p style="font-size:12px;color:#666;margin:0">涵盖微信公众号长文、短视频口播、小红书图文、传播心理学、去AI味、小说微短剧等全赛道。点击任一技能可立即切换为当前 AI 助手的创作底座：</p>
+    <div style="display:flex;gap:8px">
+      <input type="search" id="skillsSearchInput" placeholder="搜索技能名称或描述（如：卡兹克、去AI味、小红书、微短剧、故事）..." style="font-size:12px;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;flex:1" />
+    </div>
+    <div id="skillsCatalogList" style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:10px;padding:4px 2px;max-height:55vh"></div>
+    <div class="wb-dialog-footer">
+      <button type="button" data-close="skillsCatalogDialog">关闭</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="settingsDialog" class="shell-dialog"><form id="settingsForm"><header id="settingsHeading"><h2>密钥设置</h2><button type="button" data-close="settingsDialog" aria-label="关闭">×</button></header><label for="apiKey">API Key</label><div class="key-row"><input id="apiKey" type="password" autocomplete="off" placeholder="输入 API Key" spellcheck="false"><button type="button" id="toggleKey" aria-label="显示或隐藏密钥">显示</button></div><p id="keyStatus" class="subtle"></p><p id="modelTestStatus" class="flow-status" role="status"></p><footer><button id="settingsCancel" type="button" data-close="settingsDialog">取消</button><button type="submit" id="testSave" class="primary">测试并保存</button></footer></form></dialog>
+<dialog id="licenseDialog" class="shell-dialog"><header><h2>授权信息</h2><button data-close="licenseDialog" aria-label="关闭">×</button></header><div id="licenseDetails"></div><p>请添加微信：million_iiii 获取授权码</p><button id="replaceLicense">更新授权</button></dialog>
+<dialog id="confirmDialog" class="shell-dialog"><header><h2 id="confirmTitle"></h2></header><p id="confirmMessage"></p><footer><button id="confirmNo">取消</button><button id="confirmYes" class="primary">确定</button></footer></dialog>
+<div id="toast" role="status" hidden></div>
+
+<script src="/web/vendor/commonmark/commonmark-0.31.2.min.js"></script>
+<script type="module" src="/web/shell.js?v=1.2.36-20261115"></script>
+</body>
+</html>
