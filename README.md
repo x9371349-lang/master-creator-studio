@@ -4,6 +4,35 @@
 
 ---
 
+## 📸 界面预览（Interface Showcase）
+
+### 1. 工作总览 · 创作闭环全生命周期看板
+> 从选素材、看原文、确定方案、大纲拟定到审稿发布，一目了然的创作链路。
+
+![工作总览](docs/images/01_home_overview.png)
+
+### 2. 创作工坊 · 三栏极简沉浸式生产台
+> 左侧资产与多格式素材库，中央无干扰长文排版编辑，右侧集成 AI 深度拆解、受众情绪图谱与黄金开头分析。
+
+![创作工坊](docs/images/02_workbench_studio.png)
+
+### 3. 灵感雷达 · 全网爆款与热点采集
+> 聚合主流 7 大平台实时热搜榜、AI 行业前沿资讯，一键发起定向二创流。
+
+![灵感雷达](docs/images/03_radar_inspiration.png)
+
+### 4. 生图工坊 · 视觉信息图与风格卡片
+> 内置手绘微缩、Bento Grid 便当盒、Minimalist 与 370+ 风格预设，一键生成小红书 3:4 与公众号配图。
+
+![生图工坊](docs/images/04_image_workbench.png)
+
+### 5. 视频生成平台 · 短剧与多模态剧集工厂
+> 联动 ChatCut Desktop MCP 与剪映专业版，涵盖 50+ 电影片头字卡、代码电影沙盘与多集剧照资产流。
+
+![视频生成平台](docs/images/05_video_studio.png)
+
+---
+
 ## 🌟 核心功能特性
 
 ### 1. ✍️ 沉浸式创作工坊（Creative Workbench）
