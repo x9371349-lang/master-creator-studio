@@ -20,7 +20,14 @@ _CACHE = {
 
 CACHE_TTL = 300  # 5 minutes
 
-WECHAT_10W_FILE = "/Users/duandongyi/.gemini/config/skills/wechat-10w-hot/temp_articles.json"
+# 项目根目录：本文件所在目录。所有可配置路径默认相对它解析。
+_RADAR_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+def _radar_path(env_key: str, default_rel: str) -> str:
+    """环境变量优先，缺省回退到项目相对路径，保证跨机器可启动。"""
+    return os.environ.get(env_key) or os.path.join(_RADAR_ROOT, default_rel)
+
+WECHAT_10W_FILE = _radar_path("WECHAT_10W_FILE", os.path.join("data", "radar", "wechat_10w_articles.json"))
 
 
 def fetch_url(url: str, timeout: int = 12) -> str:
@@ -73,7 +80,7 @@ def parse_aihot_daily(content: str) -> dict:
     return {"title": daily_title, "items": sections}
 
 
-AIHOT_CACHE_FILE = "/Users/duandongyi/.gemini/antigravity/scratch/copy-workbench/data/aihot_cache.json"
+AIHOT_CACHE_FILE = _radar_path("AIHOT_CACHE_FILE", os.path.join("data", "radar", "aihot_cache.json"))
 
 @router.get("/aihot")
 async def get_aihot(refresh: bool = Query(False)):

@@ -90,7 +90,7 @@ function showStage(next){
 
 function lock(reason){
  if(!$('#activation'))return;
- showStage('login');$('#licenseReason').textContent=reason;$('#settingsButton').disabled=true;$('#apiKey').value='';
+ showStage('login');$('#licenseReason').textContent=reason;$('#settingsButton').disabled=true;$('#apiKey').value='';$('#baseUrl').value='';$('#modelName').value='';
  document.querySelectorAll('dialog[open]').forEach(d=>d.close());
 }
 
@@ -126,7 +126,9 @@ async function openSettings(guided=false,value){
  }else{$('#settingsDialog').append(form);}
  $('#settingsHeading').hidden=guided;$('#settingsCancel').hidden=guided;$('#testSave').textContent=guided?'测试并进入工作台':'测试并保存';
  $('#apiKey').value='';$('#apiKey').type='password';$('#toggleKey').textContent='显示';$('#apiKey').placeholder=value.api_key_masked||'输入你的 API Key';
- $('#keyStatus').textContent=value.api_key_configured?'密钥已保存，留空可使用原密钥重新测试。':'密钥仅保存在这台电脑，其他设置已由管理员配置。';
+  $('#baseUrl').value=value.base_url||'';
+  $('#modelName').value=value.model||'';
+ $('#keyStatus').textContent=value.api_key_configured?'密钥已保存，留空可使用原密钥重新测试。':'密钥仅保存在这台电脑，请填写接口地址与密钥完成首次配置。';
  $('#modelTestStatus').textContent='';$('#modelTestStatus').classList.remove('is-error');
  if(!guided)$('#settingsDialog').showModal();
  $('#apiKey').focus();
@@ -747,8 +749,9 @@ async function start(){
  $('#replaceLicense').onclick=updateLicense;$('#setupLicense').onclick=updateLicense;
  $('#toggleKey').onclick=()=>{$('#apiKey').type=$('#apiKey').type==='password'?'text':'password';$('#toggleKey').textContent=$('#apiKey').type==='password'?'显示':'隐藏';};
  $('#apiKey').oninput=()=>{$('#modelTestStatus').textContent='';$('#modelTestStatus').classList.remove('is-error');};
+  $('#baseUrl').oninput=$('#modelName').oninput=()=>{$('#modelTestStatus').textContent='';$('#modelTestStatus').classList.remove('is-error');};
  $('#activationCode').oninput=()=>{if($('#licenseReason').classList.contains('is-error')){$('#licenseReason').textContent='';$('#licenseReason').classList.remove('is-error');}};
- $('#settingsForm').onsubmit=async event=>{event.preventDefault();const button=$('#testSave');button.disabled=true;$('#apiKey').disabled=true;$('#modelTestStatus').classList.remove('is-error');$('#modelTestStatus').textContent='正在测试连接，请稍候…';try{const result=await api('/api/writing-workbench/model/test-and-save',{method:'POST',body:JSON.stringify({api_key:$('#apiKey').value})});$('#apiKey').value='';$('#apiKey').placeholder=result.api_key_masked;$('#modelTestStatus').textContent=result.message;if(stage==='setup'){await displayStatus();}else{moduleConfig?.refresh();}toast(result.message);}catch(e){$('#modelTestStatus').textContent=e.message;$('#modelTestStatus').classList.add('is-error');}finally{button.disabled=false;$('#apiKey').disabled=false;}};
+ $('#settingsForm').onsubmit=async event=>{event.preventDefault();const button=$('#testSave');button.disabled=true;$('#apiKey').disabled=true;$('#baseUrl').disabled=true;$('#modelName').disabled=true;$('#modelTestStatus').classList.remove('is-error');$('#modelTestStatus').textContent='正在测试连接，请稍候…';try{const result=await api('/api/writing-workbench/model/test-and-save',{method:'POST',body:JSON.stringify({api_key:$('#apiKey').value,base_url:$('#baseUrl').value,model:$('#modelName').value})});$('#apiKey').value='';$('#apiKey').placeholder=result.api_key_masked;$('#modelTestStatus').textContent=result.message;if(stage==='setup'){await displayStatus();}else{moduleConfig?.refresh();}toast(result.message);}catch(e){$('#modelTestStatus').textContent=e.message;$('#modelTestStatus').classList.add('is-error');}finally{button.disabled=false;$('#apiKey').disabled=false;$('#baseUrl').disabled=false;$('#modelName').disabled=false;}};
  await displayStatus();
  setInterval(async()=>{try{const status=await api('/api/license/status');if(!status.valid){currentLicense=status;lock(status.reason);}}catch{}},5000);
 }

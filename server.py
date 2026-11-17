@@ -7,6 +7,7 @@ import asyncio
 import datetime
 import socket
 import subprocess
+import tempfile
 from urllib.parse import urlsplit
 import httpx
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
@@ -30,6 +31,10 @@ DB_PATH = os.path.join(DATA_DIR, "workbench.sqlite3")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(CONFIG_DIR, exist_ok=True)
+
+def configurable_path(env_key: str, default_rel: str) -> str:
+    """环境变量优先，缺省回退到项目相对路径，保证跨机器可启动。"""
+    return os.environ.get(env_key) or os.path.join(BASE_DIR, default_rel)
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -130,7 +135,7 @@ def load_config_file(filename: str, default: Any = None):
 def load_all_installed_skills():
     skills = list(load_config_file("builtin-skills.json", []))
     existing_ids = {s.get("id") for s in skills}
-    skills_dir = "/Users/duandongyi/.gemini/config/skills"
+    skills_dir = configurable_path("GEMINI_SKILLS_DIR", os.path.join("data", "gemini_skills"))
     import glob
     for skill_file in sorted(glob.glob(f"{skills_dir}/*/SKILL.md")):
         folder_name = os.path.basename(os.path.dirname(skill_file))
@@ -270,14 +275,12 @@ async def test_and_save_model(payload: ModelTestPayload):
     current = json.loads(row[0]) if row else {}
     
     api_key = payload.api_key.strip() if payload.api_key else current.get("api_key", "")
-    
-    # Auto-detect Google Gemini API key
-    if (api_key.startswith("AIzaSy") or api_key.startswith("AQ.")) and not payload.base_url:
-        base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
-        model = payload.model or "gemini-3.5-flash-lite"
-    else:
-        base_url = (payload.base_url or current.get("base_url") or "https://api.deepseek.com").rstrip("/")
-        model = payload.model or current.get("model") or "deepseek-chat"
+    base_url = (payload.base_url or current.get("base_url") or "https://api.deepseek.com").strip().rstrip("/")
+    model = payload.model or current.get("model") or "deepseek-chat"
+
+    if base_url and not base_url.startswith(("http://", "https://")):
+        conn.close()
+        raise HTTPException(status_code=400, detail="接口地址需以 http:// 或 https:// 开头")
     
     if not api_key:
         conn.close()
@@ -901,7 +904,7 @@ async def api_extract_url(payload: ExtractUrlPayload):
         raise HTTPException(status_code=400, detail=f"提取失败: {str(e)}")
 
 # 5. CreatorHub Integration Bridge
-CREATORHUB_DB = os.environ.get("CREATORHUB_DB", "/Users/duandongyi/.gemini/antigravity/scratch/creatorhub/data/creatorhub.db")
+CREATORHUB_DB = configurable_path("CREATORHUB_DB", os.path.join("data", "creatorhub", "creatorhub.db"))
 CREATORHUB_URL = os.environ.get("CREATORHUB_URL", "http://127.0.0.1:8088")
 
 @app.get("/api/creatorhub/items")
@@ -923,7 +926,7 @@ def get_creatorhub_items(limit: int = 40):
     items = []
     for r in rows:
         cid, job_id, platform, keyword, desc, author, source_url, likes, comments, mtype, lpath, cat, aweme_id = r
-        cache_file = f"/tmp/creatorhub_transcripts/{platform}_{aweme_id}.json"
+        cache_file = os.path.join(tempfile.gettempdir(), "creatorhub_transcripts", f"{platform}_{aweme_id}.json")
         has_transcript = os.path.exists(cache_file)
         items.append({
             "id": cid,
@@ -977,8 +980,8 @@ async def import_from_creatorhub(payload: ImportCreatorHubPayload):
 
 
 # 6. Unified Materials & Hot Trends Engine
-MATERIALS_SNAPSHOT = "/Users/duandongyi/.gemini/antigravity/scratch/dsh-workbench/lib/materials.snapshot.json"
-GEN_MATERIALS_SCRIPT = "/Users/duandongyi/.gemini/antigravity/scratch/dsh-workbench/tools/gen-materials.py"
+MATERIALS_SNAPSHOT = configurable_path("MATERIALS_SNAPSHOT", os.path.join("data", "materials", "materials.snapshot.json"))
+GEN_MATERIALS_SCRIPT = configurable_path("GEN_MATERIALS_SCRIPT", os.path.join("tools", "gen-materials.py"))
 
 @app.get("/api/materials")
 def get_materials():
@@ -1068,8 +1071,15 @@ def ensure_image_workbench_daemon():
     except Exception:
         pass
 
-    py_bin = "/Users/duandongyi/plugins/dsh-plugin-image-workbench/server/.venv/bin/python"
-    server_dir = "/Users/duandongyi/plugins/dsh-plugin-image-workbench/server"
+    image_server_dir = configurable_path("IMAGE_WORKBENCH_DIR", os.path.join("vendor", "dsh-plugin-image-workbench", "server"))
+    # 跨平台解析该服务对应的 Python 解释器：环境变量优先，其次 .venv 内的解释器。
+    if os.environ.get("IMAGE_WORKBENCH_PYTHON"):
+        py_bin = os.environ["IMAGE_WORKBENCH_PYTHON"]
+    elif os.name == "nt":
+        py_bin = os.path.join(image_server_dir, ".venv", "Scripts", "python.exe")
+    else:
+        py_bin = os.path.join(image_server_dir, ".venv", "bin", "python")
+    server_dir = image_server_dir
     if os.path.exists(py_bin) and os.path.exists(server_dir):
         try:
             import subprocess
