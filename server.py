@@ -270,14 +270,12 @@ async def test_and_save_model(payload: ModelTestPayload):
     current = json.loads(row[0]) if row else {}
     
     api_key = payload.api_key.strip() if payload.api_key else current.get("api_key", "")
-    
-    # Auto-detect Google Gemini API key
-    if (api_key.startswith("AIzaSy") or api_key.startswith("AQ.")) and not payload.base_url:
-        base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
-        model = payload.model or "gemini-3.5-flash-lite"
-    else:
-        base_url = (payload.base_url or current.get("base_url") or "https://api.deepseek.com").rstrip("/")
-        model = payload.model or current.get("model") or "deepseek-chat"
+    base_url = (payload.base_url or current.get("base_url") or "https://api.deepseek.com").strip().rstrip("/")
+    model = payload.model or current.get("model") or "deepseek-chat"
+
+    if base_url and not base_url.startswith(("http://", "https://")):
+        conn.close()
+        raise HTTPException(status_code=400, detail="接口地址需以 http:// 或 https:// 开头")
     
     if not api_key:
         conn.close()
