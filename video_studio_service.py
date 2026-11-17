@@ -8,11 +8,18 @@ from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
 import httpx
 
-SERIES_DIR = "/Users/duandongyi/Desktop/history_wild_series"
-JY_DRAFT_DIR = "/Users/duandongyi/Movies/JianyingPro/User Data/Projects/com.lveditor.draft"
-CHATCUT_MCP_PATH = "/Users/duandongyi/Library/Application Support/ChatCut/chatcut-mcp"
-LEMO_DIR = "/Users/duandongyi/plugins/lemo-opuscar"
-GIF_FACTORY_DIR = "/Users/duandongyi/plugins/gif-factory"
+# 项目根目录：本文件所在目录（master-creator-studio）。所有可配置路径默认相对它解析。
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+def _path(env_key: str, default_rel: str) -> str:
+    """环境变量优先，缺省回退到项目相对路径，保证跨机器可启动。"""
+    return os.environ.get(env_key) or str(PROJECT_ROOT / default_rel)
+
+SERIES_DIR = _path("VIDEO_SERIES_DIR", "data/video_studio/history_wild_series")
+JY_DRAFT_DIR = _path("JY_DRAFT_DIR", "data/video_studio/jianying_drafts")
+CHATCUT_MCP_PATH = _path("CHATCUT_MCP_PATH", "vendor/chatcut/chatcut-mcp")
+LEMO_DIR = _path("LEMO_DIR", "vendor/lemo-opuscar")
+GIF_FACTORY_DIR = _path("GIF_FACTORY_DIR", "vendor/gif-factory")
 
 router = APIRouter(prefix="/api/video_studio", tags=["Video Studio"])
 
